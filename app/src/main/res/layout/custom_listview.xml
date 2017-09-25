@@ -5,6 +5,8 @@
     android:background="#ffffff"
     android:layout_height="match_parent">
     <RelativeLayout
+        android:id="@+id/list_layout"
+        android:background="@color/list_row1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,51 +18,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="name"
-        android:textColor="#62757f"
-
         android:textAllCaps="false"
         android:textSize="25dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/profile_image"
+        android:layout_toEndOf="@+id/profile_image"
+        android:layout_marginLeft="30dp"
 
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginStart="30dp" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="50dp"
+            android:src="@drawable/demo_dp"
+            app:border_color="#000000"
+            android:layout_centerVertical="true"
 
-    <TextView
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="2.5 km/h"
-        android:textSize="10dp"
-        android:id="@+id/textView"
-        android:layout_below="@+id/auto_list_names"
+            app:border_width="1dp" />
 
-        android:layout_centerHorizontal="true" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:tint="@color/phone_color_green"
+            android:layout_marginEnd="27dp"
+            android:layout_marginRight="27dp"
+            app:srcCompat="@mipmap/ic_local_phone_white_24dp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        app:srcCompat="@drawable/arrows"
-        android:layout_marginRight="40dp"
-        android:tint="#90a4ae"
 
-        android:layout_marginEnd="40dp"
-        android:foregroundGravity="center"
-        android:layout_alignTop="@+id/auto_list_names"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:tint="#90a4ae"
-        app:srcCompat="@drawable/auto_icon"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_above="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
     </RelativeLayout>
+
+
 </RelativeLayout>

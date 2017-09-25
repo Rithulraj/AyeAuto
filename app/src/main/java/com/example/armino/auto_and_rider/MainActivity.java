@@ -42,60 +42,60 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         auto_list=(ListView)findViewById(R.id.auto_listView);
         //demo_up_button=(Button)findViewById(R.id.button_1) ;
-        button_layout=(RelativeLayout)findViewById(R.id.relativeLayout) ;
-       title_layout=(RelativeLayout)findViewById(R.id.relativeLayout1) ;
+       // button_layout=(RelativeLayout)findViewById(R.id.relativeLayout) ;
+
         Custom_listview cv=new Custom_listview(this);
 
         auto_list.setAdapter(cv);
 
-        button_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Animation bottomUp = AnimationUtils.loadAnimation(MainActivity.this,R.anim.bottom_up);
-
-                ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
-
-
-                //fab_layout.startAnimation(bottomUp1);
-                // fab_layout.animate().translationY(0).start();
-                //fab_layout.animate().translationY(-300).start();
-                if(!backpressLog)
-
-                {
-                    //fab.setImageResource(R.drawable.ic_menu_send);
-                    //posting();
-                    backpressLog=true;
-                    bottomUp.setDuration(250);
-
-                    hiddenPanel.startAnimation(bottomUp);
-                    hiddenPanel.setVisibility(View.VISIBLE);
-                    button_layout.setVisibility(View.GONE);
-
-
-                    fabLog=false;
-                }
-//                else
+//        button_layout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Animation bottomUp = AnimationUtils.loadAnimation(MainActivity.this,R.anim.bottom_up);
+////
+//              ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
+//
+//
+//                //fab_layout.startAnimation(bottomUp1);
+//                // fab_layout.animate().translationY(0).start();
+//                //fab_layout.animate().translationY(-300).start();
+//                if(!backpressLog)
+//
 //                {
-//                    Animation bottom_down = AnimationUtils.loadAnimation(MainActivity.this,
-//                            R.anim.bottom_down);
-//                    // ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
-//                    hiddenPanel.startAnimation(bottom_down);
-//                    hiddenPanel.setVisibility(View.INVISIBLE);
-//
-//                    //Animation bottomUp1 = AnimationUtils.loadAnimation(Admis_voice.this,R.anim.fab_button_down);
-//
-//                    //fab_layout.startAnimation(bottomUp1);
-//                    //fab_layout.animate().translationY(0).start();
-//                    // fab.setImageResource(R.mipmap.mail_icon);
-//                    fabLog=true;
-//
+//                    //fab.setImageResource(R.drawable.ic_menu_send);
+//                    //posting();
 //                    backpressLog=true;
+////                    bottomUp.setDuration(100);
+////
+////                    hiddenPanel.startAnimation(bottomUp);
+//                    hiddenPanel.setVisibility(View.VISIBLE);
+//                    button_layout.setVisibility(View.GONE);
+//
+//
+//                    fabLog=false;
 //                }
-
-
-
-            }
-        });
+////                else
+////                {
+////                    Animation bottom_down = AnimationUtils.loadAnimation(MainActivity.this,
+////                            R.anim.bottom_down);
+////                    // ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
+////                    hiddenPanel.startAnimation(bottom_down);
+////                    hiddenPanel.setVisibility(View.INVISIBLE);
+////
+////                    //Animation bottomUp1 = AnimationUtils.loadAnimation(Admis_voice.this,R.anim.fab_button_down);
+////
+////                    //fab_layout.startAnimation(bottomUp1);
+////                    //fab_layout.animate().translationY(0).start();
+////                    // fab.setImageResource(R.mipmap.mail_icon);
+////                    fabLog=true;
+////
+////                    backpressLog=true;
+////                }
+//
+//
+//
+//            }
+//        });
 
 
 
@@ -145,30 +145,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
 
-        if(backpressLog)
-        {
-
-            Animation bottom_down = AnimationUtils.loadAnimation(MainActivity.this,
-                    R.anim.bottom_down);
-
-
-            ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
-            hiddenPanel.startAnimation(bottom_down);
-            hiddenPanel.setVisibility(View.INVISIBLE);
-
-
-            //Animation bottomUp1 = AnimationUtils.loadAnimation(Admis_voice.this,R.anim.fab_button_down);
-
-            //fab_layout.startAnimation(bottomUp1);
-            //fab_layout.animate().translationY(0).start();
-            // fab.setImageResource(R.mipmap.mail_icon);
-            fabLog=true;
-
-            backpressLog=false;
-            button_layout.setVisibility(View.VISIBLE);
-        }
-        else {
+//        if(backpressLog)
+//        {
+//
+//            Animation bottom_down = AnimationUtils.loadAnimation(MainActivity.this,
+//                    R.anim.bottom_down);
+//
+//
+//            ViewGroup hiddenPanel = (ViewGroup)findViewById(R.id.hiden_layout_ID);
+//            hiddenPanel.startAnimation(bottom_down);
+//            hiddenPanel.setVisibility(View.INVISIBLE);
+//
+//
+//            fabLog=true;
+//
+//            backpressLog=false;
+//            button_layout.setVisibility(View.VISIBLE);
+//        }
+//        else {
             super.onBackPressed();
-        }
+
     }
 }

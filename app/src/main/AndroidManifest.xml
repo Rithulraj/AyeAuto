@@ -31,13 +31,16 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"></activity>
+        <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".Rider_activity"
+            android:label="@string/title_activity_rider_activity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
