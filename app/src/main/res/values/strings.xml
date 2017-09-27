@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AyeAuto-Riders</string>
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_rider_activity">Rider_activity</string>
+    <string name="title_activity_rider_activity">AyeAuto-Riders</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

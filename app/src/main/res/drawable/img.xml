@@ -2,6 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
 
+    <item android:drawable="@drawable/demo_dp"/>
     <item android:drawable="@drawable/circle_boundary"/>
 
 </layer-list>

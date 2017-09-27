@@ -43,6 +43,7 @@ class Custom_listview extends BaseAdapter{
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater in=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v=in.inflate(R.layout.custom_listview,null,true);
+
         RelativeLayout list_layout = (RelativeLayout) v.findViewById(R.id.list_layout);
         if(i % 2 == 1) {
 

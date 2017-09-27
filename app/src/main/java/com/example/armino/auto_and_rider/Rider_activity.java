@@ -1,5 +1,6 @@
 package com.example.armino.auto_and_rider;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +29,8 @@ public class Rider_activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
     ListView auto_list;
     private GoogleMap mMap;
+    Button menu_button,voice_button;
+    Custom_listview cv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +43,17 @@ public class Rider_activity extends AppCompatActivity
                 .findFragmentById(R.id.map2);
         mapFragment.getMapAsync(Rider_activity.this);
         auto_list=(ListView)findViewById(R.id.auto_listView_ID);
-        //demo_up_button=(Button)findViewById(R.id.button_1) ;
-        // button_layout=(RelativeLayout)findViewById(R.id.relativeLayout) ;
+        menu_button=(Button)findViewById(R.id.menu_button) ;
+        voice_button=(Button) findViewById(R.id.voice_nav_button) ;
 
-        Custom_listview cv=new Custom_listview(this);
 
-        auto_list.setAdapter(cv);
+
+        backgroundLoadListView c=new backgroundLoadListView();
+        c.execute();
+
+
+
+
 
 
 
@@ -130,5 +140,42 @@ public class Rider_activity extends AppCompatActivity
                 .position(sydney)
                 .title("my position"));
 
+
+
+
     }
+
+    public class backgroundLoadListView extends
+            AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // TODO Auto-generated method stub
+            auto_list.setAdapter(cv);
+
+
+
+            Toast.makeText(Rider_activity.this,
+                    "onPostExecute \n: setListAdapter after bitmap preloaded",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            Toast.makeText(Rider_activity.this, "onPreExecute \n: preload bitmap in AsyncTask",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+          //  preLoadSrcBitmap();
+             cv=new Custom_listview(Rider_activity.this);
+
+            return null;
+        }
+
+    }
+
 }
