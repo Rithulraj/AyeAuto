@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by armino on 20-09-2017.
  */
@@ -52,6 +54,8 @@ class Custom_listview extends BaseAdapter{
 
 
         TextView auto_name=(TextView)v.findViewById(R.id.auto_list_names);
+        ImageView auto_pict=(ImageView)v.findViewById(R.id.customList_Imageview_ID);
+        Picasso.with(context).load(R.drawable.ic_perm_identity_black_24dp).into(auto_pict);
         auto_name.setText(names[i]);
         return v;
 

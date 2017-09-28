@@ -4,36 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.armino.auto_and_rider.Rider_activity"
     tools:showIn="@layout/app_bar_rider_activity">
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|bottom">
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+           android:weightSum="2"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <fragment
+
+        <fragment
         android:id="@+id/map2"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:context="com.example.armino.auto_and_rider.MapsActivity"
-        android:layout_above="@+id/view3"
+        android:layout_above="@+id/auto_listView_ID"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/view3">
+        </LinearLayout>
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/listView_layout_ID"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
     <ListView
         android:id="@+id/auto_listView_ID"
         android:layout_width="match_parent"
         android:visibility="visible"
         android:background="#ffffff"
-        android:layout_height="200dp"
+        android:layout_height="match_parent"
         android:divider="#ffffff"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-    </View>
+        </LinearLayout>
+    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
 
 
 
@@ -59,11 +83,12 @@
             android:layout_marginLeft="13dp"
             android:layout_marginStart="13dp" />
         <EditText
+            android:id="@+id/search_editText_ID"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:typeface="sans"
-            android:text="Calicut Jn"
+            android:hint="Type Destination"
             android:singleLine="true"
             android:imeOptions="actionDone"
             android:textColor="#000000"
@@ -87,5 +112,7 @@
             android:background="@mipmap/ic_mic_black_24dp" />
 
     </RelativeLayout>
+
+
 
 </RelativeLayout>

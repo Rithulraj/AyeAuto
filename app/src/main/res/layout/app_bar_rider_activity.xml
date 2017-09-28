@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context="com.example.armino.auto_and_rider.Rider_activity">
 
     <android.support.design.widget.AppBarLayout
@@ -34,6 +35,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
     <include layout="@layout/content_rider_activity" />
+    <include layout="@layout/processbar_layout"></include>
 
 </android.support.design.widget.CoordinatorLayout>

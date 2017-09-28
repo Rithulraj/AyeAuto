@@ -1,9 +1,16 @@
 package com.example.armino.auto_and_rider;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,7 +21,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,12 +36,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import Adapter_class.GPS_track;
+
 public class Rider_activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
     ListView auto_list;
     private GoogleMap mMap;
-    Button menu_button,voice_button;
+    Button menu_button, voice_button;
     Custom_listview cv;
+    double latitude, longitude;
+    EditText Search_editText;
+    CoordinatorLayout coordinatorLayout;
+    LinearLayout listView_layout;
+    RelativeLayout map_layout,progressBar_layout;
+    String city_name,state_name,place_name;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +60,26 @@ public class Rider_activity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map2);
-        mapFragment.getMapAsync(Rider_activity.this);
-        auto_list=(ListView)findViewById(R.id.auto_listView_ID);
-        menu_button=(Button)findViewById(R.id.menu_button) ;
-        voice_button=(Button) findViewById(R.id.voice_nav_button) ;
+
+     //   ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        coordinatorLayout=(CoordinatorLayout)findViewById(R.id.coordinatorLayout);
+        listView_layout=(LinearLayout) findViewById(R.id.listView_layout_ID);
+        auto_list = (ListView) findViewById(R.id.auto_listView_ID);
+        menu_button = (Button) findViewById(R.id.menu_button);
+        voice_button = (Button) findViewById(R.id.voice_nav_button);
+        Search_editText=(EditText)findViewById(R.id.search_editText_ID) ;
+
+
+        getLocation();
 
 
 
-        backgroundLoadListView c=new backgroundLoadListView();
+
+
+
+
+        backgroundLoadListView c = new backgroundLoadListView();
         c.execute();
-
-
-
-
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -131,16 +155,14 @@ public class Rider_activity extends AppCompatActivity
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(11.2726, 75.7800);
+        LatLng sydney = new LatLng(latitude, longitude);
         // mMap.addMarker(new MarkerOptions().position(sydney).title("Here"));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMinZoomPreference(16);
-        Marker marker=mMap.addMarker(new MarkerOptions()
+        Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(sydney)
-                .title("my position"));
-
-
+                .title(place_name));
 
 
     }
@@ -152,7 +174,6 @@ public class Rider_activity extends AppCompatActivity
         protected void onPostExecute(Void result) {
             // TODO Auto-generated method stub
             auto_list.setAdapter(cv);
-
 
 
             Toast.makeText(Rider_activity.this,
@@ -170,12 +191,138 @@ public class Rider_activity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             // TODO Auto-generated method stub
-          //  preLoadSrcBitmap();
-             cv=new Custom_listview(Rider_activity.this);
+            //  preLoadSrcBitmap();
+            cv = new Custom_listview(Rider_activity.this);
 
             return null;
         }
 
     }
 
+
+    void getLocation() {
+
+
+        GPS_track gpsTracker = new GPS_track(this);
+
+        if (gpsTracker.getIsGPSTrackingEnabled()) {
+
+            latitude = gpsTracker.latitude;
+
+
+//            textview = (TextView)findViewById(R.id.fieldLatitude);
+//            textview.setText(stringLatitude);
+
+            longitude = gpsTracker.longitude;
+//            textview = (TextView)findViewById(R.id.fieldLongitude);
+//            textview.setText(stringLongitude);
+
+         state_name = gpsTracker.getCountryName(this);
+//            textview = (TextView)findViewById(R.id.fieldCountry);
+//            textview.setText(country);
+
+           city_name= gpsTracker.getLocality(this);
+//            textview = (TextView)findViewById(R.id.fieldCity);
+//            textview.setText(city);
+
+            String postalCode = gpsTracker.getPostalCode(this);
+//            textview = (TextView)findViewById(R.id.fieldPostalCode);
+//            textview.setText(postalCode);
+
+           place_name = gpsTracker.getAddressLine(this);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map2);
+            mapFragment.getMapAsync(Rider_activity.this);
+            driverSearch_snackbar("Founded no driver nearby","REFRESH");
+
+//            textview = (TextView)findViewById(R.id.fieldAddressLine);
+//            textview.setText(addressLine);
+            try {
+               // Search_editText.setText("dddd");
+
+
+            }catch (Exception e)
+            {
+
+            }
+
+         //  Toast.makeText(Rider_activity.this, "City :" + city + "country" + country, Toast.LENGTH_LONG).show();
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gpsTracker.showSettingsAlert();
+
+        }
+
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    void snackbar(String message,String button_title) {
+        try {
+            Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(button_title, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //getLocation();
+                            listView_layout.setVisibility(View.GONE);
+                            driverSearch_snackbar("Founded no driver nearby","REFRESH");
+//                            Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "AAA", Snackbar.LENGTH_SHORT);
+//                            snackbar1.show();
+                        }
+                    });
+
+            snackbar.show();
+        }catch (Exception e)
+        {
+            e.getMessage();
+        }
+    }
+
+    void driverSearch_snackbar(String message,String button_title) {
+        try {
+            final Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(button_title, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            listView_layout.setVisibility(View.VISIBLE);
+                           snackbar("Found 2 driver","Back");
+
+                        }
+                    });
+
+            snackbar.show();
+        }catch (Exception e)
+        {
+            e.getMessage();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+       // snackbar("Update the location","Yes");
+      //  getLocation();
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        snackbar("Update the location","Yes");
+        getLocation();
+    }
 }
