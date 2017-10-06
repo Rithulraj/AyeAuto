@@ -19,6 +19,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.armino.auto_and_rider.R;
 
@@ -69,10 +70,11 @@ public class GPS_track extends Service implements LocationListener {
         getLocation();
     }
 
+
     /**
      * Try to get my current location by GPS or Network Provider
      */
-    public void getLocation() {
+    public Location getLocation() {
 
         try {
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
@@ -84,12 +86,94 @@ public class GPS_track extends Service implements LocationListener {
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             // Try to get location if you GPS Service is enabled
-            if (isGPSEnabled) {
+           /* if (!isNetworkEnabled){
+                location = null;
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000,0,this);
+                if (locationManager!=null){
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    if (location!=null){
+
+                        Log.e("latitude",location.getLatitude()+"");
+                        Log.e("longitude",location.getLongitude()+"");
+
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                       // fn_update(location);
+                    }
+                }
+
+            } */
+         /*   if (isNetworkEnabled) { ...........................................................................................
                 this.isGPSTrackingEnabled = true;
 
+                Log.d(TAG, "Application use Network State to get GPS coordinates");
+
+
+                provider_info = LocationManager.NETWORK_PROVIDER;
+
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                if (location != null) {
+                    Toast.makeText(mContext,"Location finding using network",Toast.LENGTH_SHORT).show();
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                }
+                else
+                {
+                    if (isGPSEnabled) {
+                        this.isGPSTrackingEnabled = true;
+
+                        Log.d(TAG, "Application use GPS Service");
+
+
+                        provider_info = LocationManager.GPS_PROVIDER;
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                        if (location != null) {
+                            Toast.makeText(mContext,"Location finding using GPS",Toast.LENGTH_SHORT).show();
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+
+
+                    }
+                }
+
+
+            } */
+
+            if (isGPSEnabled) {
+
+                this.isGPSTrackingEnabled = true;
+              //  Toast.makeText(mContext," gps checking",Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Application use GPS Service");
+                try {
 
 
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                        ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+                       // Toast.makeText(mContext, "permissin not granted", Toast.LENGTH_SHORT).show();
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+
+                    } else {
+                        //Toast.makeText(mContext, "permission already granted", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.getMessage();
+                }
 
                 /*
                  * This provider determines location using
@@ -102,24 +186,16 @@ public class GPS_track extends Service implements LocationListener {
 
 
                 provider_info = LocationManager.GPS_PROVIDER;
+               locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
                 location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if (location != null) {
+                    Toast.makeText(mContext,"Location finding using GPS",Toast.LENGTH_SHORT).show();
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                 }
 
-            } else if (isNetworkEnabled) { // Try to get location if you Network Service is enabled
-                this.isGPSTrackingEnabled = true;
-
-                Log.d(TAG, "Application use Network State to get GPS coordinates");
-
-                /*
-                 * This provider determines location based on
-                 * availability of cell tower and WiFi access points. Results are retrieved
-                 * by means of a network lookup.
-                 */
-                provider_info = LocationManager.NETWORK_PROVIDER;
 
             }
 
@@ -134,12 +210,10 @@ public class GPS_track extends Service implements LocationListener {
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
                     ActivityCompat.requestPermissions((Activity)mContext, new String[]{
-                            android.Manifest.permission.ACCESS_FINE_LOCATION
-                    }, 10);
+                            android.Manifest.permission.ACCESS_FINE_LOCATION}, 10);
 
 
-
-                    return;
+                    return location;
                 }
                 locationManager.requestLocationUpdates(
                         provider_info,
@@ -159,7 +233,9 @@ public class GPS_track extends Service implements LocationListener {
             //e.printStackTrace();
             Log.e(TAG, "Impossible to connect to LocationManager", e);
         }
+        return location;
     }
+
 
     /**
      * Update GPSTracker latitude and longitude
@@ -221,10 +297,10 @@ public class GPS_track extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         //Setting Dialog Title
-        alertDialog.setTitle("Location_title");
+        alertDialog.setTitle("Enable Location Service");
 
         //Setting Dialog Message
-        alertDialog.setMessage("Message");
+        alertDialog.setMessage("Go to settings");
 
         //On Pressing Setting button
         alertDialog.setPositiveButton(R.string.action_settings, new DialogInterface.OnClickListener() {

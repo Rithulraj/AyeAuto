@@ -5,58 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
+    android:id="@+id/content_map_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.armino.auto_and_rider.Rider_activity"
     tools:showIn="@layout/app_bar_rider_activity">
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+    <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|bottom">
-       <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-           android:weightSum="2"
-        android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="2">
 
 
-        <fragment
-        android:id="@+id/map2"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.armino.auto_and_rider.MapsActivity"
-        android:layout_above="@+id/auto_listView_ID"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.example.armino.auto_and_rider.Rider_Map" />
+
         </LinearLayout>
 
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/listView_layout_ID"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
-    <ListView
-        android:id="@+id/auto_listView_ID"
-        android:layout_width="match_parent"
-        android:visibility="visible"
-        android:background="#ffffff"
-        android:layout_height="match_parent"
-        android:divider="#ffffff"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-        </LinearLayout>
-    </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+
+            <ListView
+                android:id="@+id/auto_listView_ID"
+                android:layout_width="wrap_content"
+
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+
+
+                android:background="#ffffff"
+                android:divider="#ffffff"
+                android:visibility="gone" />
+
+
+    </RelativeLayout>
 
 
 
@@ -82,7 +75,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginLeft="13dp"
             android:layout_marginStart="13dp" />
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/search_editText_ID"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

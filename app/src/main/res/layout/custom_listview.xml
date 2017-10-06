@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/list_layout"
-        android:background="@color/list_row1"
+        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -19,42 +19,54 @@
         android:layout_height="wrap_content"
         android:text="name"
         android:textAllCaps="false"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/customList_Imageview_ID"
-        android:layout_toEndOf="@+id/customList_Imageview_ID"
-        android:layout_marginLeft="30dp"
+        android:typeface="monospace"
+        android:textColor="#000000"
+
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
 
-        android:layout_marginStart="30dp" />
+        />
 
         <ImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/customList_Imageview_ID"
             android:layout_width="45dp"
             android:layout_height="45dp"
-
-            android:layout_alignParentTop="true"
+            android:tint="#4C4C4C"
+            android:layout_marginLeft="17dp"
+            android:layout_marginStart="17dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="33dp"
-            android:layout_marginStart="33dp" />
+            android:layout_alignParentStart="true" />
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:tint="@color/phone_color_green"
             android:layout_marginEnd="27dp"
             android:layout_marginRight="27dp"
+            android:tint="@color/phone_color_green"
             app:srcCompat="@mipmap/ic_local_phone_white_24dp" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.2"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/customList_Imageview_ID" />
 
 
     </RelativeLayout>
+
+
 
 
 </RelativeLayout>

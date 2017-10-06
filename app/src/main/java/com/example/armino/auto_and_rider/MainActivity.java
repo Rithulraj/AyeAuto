@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import android.view.ViewGroup.LayoutParams;
+
+import Adapter_class.GPSTracker;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -46,7 +49,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Custom_listview cv=new Custom_listview(this);
 
+
         auto_list.setAdapter(cv);
+
+        ListView mListView = (ListView)   findViewById(R.id.auto_listView);
+        LayoutParams list = (LayoutParams) mListView.getLayoutParams();
+        list.height = 200;//like int  200
+        GPSTracker gps=new GPSTracker(this);
+        // Location loc= t.getLocation();
+
+        double latitude = gps.getLatitude();
+        double longitude = gps.getLongitude();
+
+        // \n is for new line
+        Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+        // mListView.setLayoutParams(list);
 
 //        button_layout.setOnClickListener(new View.OnClickListener() {
 //            @Override

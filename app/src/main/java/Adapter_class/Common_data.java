@@ -5,4 +5,5 @@ package Adapter_class;
  */
 
 public class Common_data {
+
 }

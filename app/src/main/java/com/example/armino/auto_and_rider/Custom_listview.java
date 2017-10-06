@@ -19,8 +19,9 @@ import com.squareup.picasso.Picasso;
 
 class Custom_listview extends BaseAdapter{
     Activity context;
-    String[] names={"Jithesh","Sooraj","Habeeb","Hari","ffff","fffffff"};
-   static boolean colorFlag=true;
+   public String[] names={"Kl-45-443","KL-45-4523","KL-45-4553","KL-45-4823","KL-45-4527","KL-45-4153","KL-45-2823","KL-45-7823"};
+  //public String[] names={"Kl-45-443","KL-45-4523"};
+   //public String[] names={"Kl-45-443"};
 
     public Custom_listview(Activity mainActivity) {
         this.context=mainActivity;
@@ -47,16 +48,14 @@ class Custom_listview extends BaseAdapter{
         View v=in.inflate(R.layout.custom_listview,null,true);
 
         RelativeLayout list_layout = (RelativeLayout) v.findViewById(R.id.list_layout);
-        if(i % 2 == 1) {
 
-            list_layout.setBackgroundColor(Color.parseColor("#ffffff"));
-        }
 
 
         TextView auto_name=(TextView)v.findViewById(R.id.auto_list_names);
         ImageView auto_pict=(ImageView)v.findViewById(R.id.customList_Imageview_ID);
-        Picasso.with(context).load(R.drawable.ic_perm_identity_black_24dp).into(auto_pict);
         auto_name.setText(names[i]);
+        Picasso.with(context).load(R.drawable.demo_dp4).into(auto_pict);
+
         return v;
 
     }
