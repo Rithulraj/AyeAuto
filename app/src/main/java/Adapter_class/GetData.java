@@ -21,8 +21,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -32,11 +34,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class GetData extends AsyncTask<String, Void, String> {
 
-String plateNo[];
-
-    public String[] getPlateNo() {
-        return plateNo;
-    }
+public static  ArrayList<String> al=new ArrayList<>();
+public static Map<String,String> map=new HashMap<String,String>();
 
     protected void onPreExecute(){}
 
@@ -52,7 +51,7 @@ String plateNo[];
 
 
             postDataParams.put("lat",11.2918833);
-           postDataParams.put("lon",75.781179);
+            postDataParams.put("lon",75.781179);
             postDataParams.put("rad",10.0);
 
 
@@ -91,19 +90,16 @@ String plateNo[];
                 String json =sb.toString();
 
 
-               // JSONObject jObject = new JSONObject(json);
+
                 JSONArray jArray = new JSONArray(json);
-               // ArrayList<Employees> emplist=new ArrayList<>();
+
                 for (int i = 0; i < jArray.length(); i++) {
                     JSONObject jObj = jArray.getJSONObject(i);
                     Log.e("Number Plate:",jObj.getString("number_plate"));
                     Log.e("Phone no:",jObj.getString("phone"));
+                      al.add(jObj.getString("number_plate"));
+                    map.put(jObj.getString("number_plate"),jObj.getString("phone"));
 
-                    // emplist.add(new Employees(jObj.getString("id"),jObj.getString("name")));
-                   // al.add("jdk");
-                 //   System.out.println(i + " NumberPlate : " + jObj.getString("number_plate"));
-                  //  System.out.println(i + "Phone No : " + jObj.getString("phone"));
-                    //  System.out.println(i + " att2 : " + jObj.getBoolean("att2"));
                 }
 
                 Log.e("Strig buffer",sb.toString());

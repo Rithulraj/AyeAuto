@@ -22,6 +22,8 @@ import com.squareup.picasso.Picasso;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
+import Adapter_class.GetData;
+
 /**
  * Created by armino on 20-09-2017.
  */
@@ -39,7 +41,7 @@ class Custom_listview extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return names.length;
+        return GetData.al.size();
     }
 
     @Override
@@ -63,7 +65,8 @@ class Custom_listview extends BaseAdapter {
       final   TextView auto_name=(TextView)v.findViewById(R.id.auto_list_names);
         ImageView auto_pict=(ImageView)v.findViewById(R.id.customList_Imageview_ID);
 
-        auto_name.setText(names[i]);
+        auto_name.setText(GetData.al.get(i));
+        //auto_name.setText(GetData.map.get(i));
         Picasso.with(context).load(R.drawable.demo_dp4).into(auto_pict);
 
 
@@ -71,12 +74,12 @@ class Custom_listview extends BaseAdapter {
 
             @Override
             public void onClick(View view) {
-                System.out.println("image clicked:"+names[i]+"...............");
-                Toast.makeText(context,"image clicked:"+names[i],Toast.LENGTH_LONG).show();
+                System.out.println("image clicked:"+GetData.al.get(i)+"...............");
+                Toast.makeText(context,"image clicked:"+GetData.al.get(i),Toast.LENGTH_LONG).show();
                // v.setBackgroundColor(Color.parseColor("#ff00bf"));
               //  auto_name.setTextColor(Color.parseColor("#19c5ff"));
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:"+ 121));//change the number
+                callIntent.setData(Uri.parse("tel:"+ GetData.map.get(GetData.al.get(i))));//change the number
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 }
                 context.startActivity(callIntent);

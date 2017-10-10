@@ -82,6 +82,9 @@ public class Rider_activity extends AppCompatActivity
     StringBuilder sb = new StringBuilder();
     String resultAddress;
 
+    LayoutParams list;
+    ListView mListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,20 +128,13 @@ public class Rider_activity extends AppCompatActivity
         cv = new Custom_listview(Rider_activity.this);
         //auto_list.setAdapter(cv);
 
-        ListView mListView = (ListView) findViewById(R.id.auto_listView_ID);
-        LayoutParams list = (LayoutParams) mListView.getLayoutParams();
+         mListView = (ListView) findViewById(R.id.auto_listView_ID);
+        list = (LayoutParams) mListView.getLayoutParams();
         //  mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        n = cv.getCount();
-
-        //Toast.makeText(getApplicationContext(), "List size:"+n, Toast.LENGTH_SHORT).show();
 
 
-        if (n <= 5) {
-            list.height = (n) * 100 + 100;
-        } else {
-            list.height = 5 * 100 + 100;
-        }
-        mListView.setAdapter(cv);
+
+
 
         cv.notifyDataSetChanged();
         //mListView.setLayoutParams();
@@ -465,6 +461,15 @@ public class Rider_activity extends AppCompatActivity
                         @Override
                         public void onClick(View view) {
                             new GetData().execute();
+                            n = cv.getCount();
+
+                            Toast.makeText(getApplicationContext(), "List size:"+n, Toast.LENGTH_SHORT).show();
+                            if (n <= 5) {
+                                list.height = (n) * 100 + 100;
+                            } else {
+                                list.height = 5 * 100 + 100;
+                            }
+                            mListView.setAdapter(cv);
                             auto_list.setVisibility(View.VISIBLE);
                             snackbar("Found " + n + " driver", "Back");
 
