@@ -8,12 +8,14 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -26,15 +28,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -49,14 +54,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.view.ViewGroup.LayoutParams;
+
 import Adapter_class.Distance_calculator;
 import Adapter_class.GPS_track;
+import Adapter_class.GetData;
 
 public class Rider_activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
     private static final String TAG = "";
     ListView auto_list;
+    EditText search_destination;
     private GoogleMap mMap;
     Button menu_button, voice_button;
     Custom_listview cv;
@@ -64,11 +73,11 @@ public class Rider_activity extends AppCompatActivity
     AutoCompleteTextView Search_editText;
     CoordinatorLayout coordinatorLayout;
     LinearLayout listView_layout;
-    RelativeLayout map_layout,progressBar_layout;
-    String city_name,state_name,place_name;
+    RelativeLayout map_layout, progressBar_layout;
+    String city_name, state_name, place_name;
 
     Distance_calculator distance_calculator;
-    int n=0,mapSet=0;
+    int n = 0, mapSet = 0;
 
     StringBuilder sb = new StringBuilder();
     String resultAddress;
@@ -78,6 +87,7 @@ public class Rider_activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rider_activity);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -87,11 +97,13 @@ public class Rider_activity extends AppCompatActivity
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         progressBar_layout = (RelativeLayout) findViewById(R.id.progressbar_layout_ID);
         map_layout = (RelativeLayout) findViewById(R.id.content_map_layout);
-       // listView_layout = (LinearLayout) findViewById(R.id.listView_layout_ID);
+        // listView_layout = (LinearLayout) findViewById(R.id.listView_layout_ID);
         auto_list = (ListView) findViewById(R.id.auto_listView_ID);
-        menu_button = (Button) findViewById(R.id.menu_button);
+
         voice_button = (Button) findViewById(R.id.voice_nav_button);
+        search_destination  = (EditText) findViewById(R.id.search_editText_ID);;
         Search_editText = (AutoCompleteTextView) findViewById(R.id.search_editText_ID);
+        snackbar_search("Update the location", "Yes");
         try {
 
 
@@ -103,13 +115,10 @@ public class Rider_activity extends AppCompatActivity
             } else {
                 //Toast.makeText(Rider_activity.this, "permission already granted", Toast.LENGTH_SHORT).show();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.getMessage();
         }
 
-        getLocation();
 
         //  backgroundLoadListView c = new backgroundLoadListView();
         // c.execute();
@@ -118,21 +127,20 @@ public class Rider_activity extends AppCompatActivity
 
         ListView mListView = (ListView) findViewById(R.id.auto_listView_ID);
         LayoutParams list = (LayoutParams) mListView.getLayoutParams();
-      //  mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        n= cv.getCount();
+        //  mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        n = cv.getCount();
 
         //Toast.makeText(getApplicationContext(), "List size:"+n, Toast.LENGTH_SHORT).show();
 
 
-       if (n <= 5)
-       {
+        if (n <= 5) {
             list.height = (n) * 100 + 100;
-       }
-       else
-        {
-           list.height = 5 * 100 + 100;
+        } else {
+            list.height = 5 * 100 + 100;
         }
         mListView.setAdapter(cv);
+
+        cv.notifyDataSetChanged();
         //mListView.setLayoutParams();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -143,6 +151,23 @@ public class Rider_activity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+ /*     auto_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
+
+       {
+            @Override
+            public void onItemClick(AdapterView arg0, View arg1, int position, long arg3) {
+                System.out.println("posit................:" + position);
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:"+ 121));//change the number
+               if (ActivityCompat.checkSelfPermission(Rider_activity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                }
+                startActivity(callIntent);
+
+            }
+        }); */
     }
 
     @Override
@@ -210,6 +235,8 @@ public class Rider_activity extends AppCompatActivity
 
         mMap = googleMap;
         map_layout.setVisibility(View.VISIBLE);
+
+
         // Add a marker in Sydney and move the camera
      /*   if(latitude==0 && longitude==0)
         {
@@ -240,7 +267,6 @@ public class Rider_activity extends AppCompatActivity
         progressBar_layout.setVisibility(View.GONE); */
 
 
-
     }
 
     public class backgroundLoadListView extends
@@ -249,7 +275,6 @@ public class Rider_activity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void result) {
             // TODO Auto-generated method stub
-
 
 
 //           // Toast.makeText(Rider_activity.this,
@@ -284,19 +309,17 @@ public class Rider_activity extends AppCompatActivity
         if (gpsTracker.getIsGPSTrackingEnabled()) {
 
 
-
             latitude = gpsTracker.latitude;
             longitude = gpsTracker.longitude;
 
             state_name = gpsTracker.getCountryName(this);
-            city_name= gpsTracker.getLocality(this);
+            city_name = gpsTracker.getLocality(this);
 
-            place_name =gpsTracker.getAddressLine(this);
+            place_name = gpsTracker.getAddressLine(this);
 
-            String[]  addr= place_name.split(",");
-            int size=addr.length;
-            for(int i=0;i<size;i++)
-            {
+            String[] addr = place_name.split(",");
+            int size = addr.length;
+            for (int i = 0; i < size; i++) {
                 sb.append(addr[i]).append("\n");
             }
             resultAddress = sb.toString();
@@ -304,7 +327,7 @@ public class Rider_activity extends AppCompatActivity
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(Rider_activity.this);
 
-          //  driverSearch_snackbar("Founded no driver nearby","REFRESH");
+            //  driverSearch_snackbar("Founded no driver nearby","REFRESH");
 
         } else {
 
@@ -318,16 +341,15 @@ public class Rider_activity extends AppCompatActivity
         switch (requestCode) {
             case 1: {
 
-               // Toast.makeText(Rider_activity.this,"permission 1 granted",Toast.LENGTH_LONG).show();
+                // Toast.makeText(Rider_activity.this,"permission 1 granted",Toast.LENGTH_LONG).show();
                 return;
             }
 
         }
     }
 
-    void snackbar(String message,String button_title) {
+    void snackbar(String message, String button_title) {
 
-            driverSearch_snackbar("Founded no driver nearby","REFRESH");
 
         try {
             Snackbar snackbar = Snackbar
@@ -337,58 +359,61 @@ public class Rider_activity extends AppCompatActivity
                         public void onClick(View view) {
 
                             auto_list.setVisibility(View.GONE);
-                            driverSearch_snackbar("Founded no driver nearby","REFRESH");
+                            driverSearch_snackbar("Founded no driver nearby", "REFRESH");
 
                         }
                     });
 
             snackbar.show();
-        }catch (Exception e)
-        {
+
+
+        } catch (Exception e) {
             e.getMessage();
         }
     }
-    void snackbar_search(String message,String button_title) {
+
+    void snackbar_search(String message, String button_title) {
+
         try {
             Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
                     .setAction(button_title, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
+                            getLocation();
                             mMap.clear();
 
-                            if(latitude==0 && longitude==0)
-                            {
+
+                            if (latitude == 0 && longitude == 0) {
                                 latitude = 11.279343;
                                 longitude = 75.784348;
-                                Toast.makeText(Rider_activity.this,"Location not accurate",Toast.LENGTH_LONG).show();
+                                Toast.makeText(Rider_activity.this, "Location not accurate", Toast.LENGTH_LONG).show();
 
-                            }
-                            else
-                            {
+                            } else {
                                 LatLng mylocation = new LatLng(latitude, longitude);
+
+                                LatLng driverLoc1 = new LatLng(latitude + .001, longitude + .001);
 
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
                                 mMap.setMinZoomPreference(16);
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(mylocation).title("My Location").snippet(place_name));
                                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.demo_marker2));
 
+                                Marker marker1 = mMap.addMarker(new MarkerOptions().position(driverLoc1));
+                                marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ayeauto_marker));
 
-                                mapSet=1;
+                                mapSet = 1;
                             }
 
 
-                            Toast.makeText(Rider_activity.this,"longitude:"+longitude+"latitude:"+latitude,Toast.LENGTH_LONG).show();
+                            Toast.makeText(Rider_activity.this, "longitude:" + longitude + "latitude:" + latitude, Toast.LENGTH_LONG).show();
 
                             auto_list.setVisibility(View.GONE);
 
 
-                            if(mapSet==1)
-                            {
-                                driverSearch_snackbar("Founded no driver nearby","REFRESH");
-                            }
-                            else {
+                            if (mapSet == 1) {
+                                driverSearch_snackbar("Founded no driver nearby", "REFRESH");
+                            } else {
                                 snackbar("Searching....", "cancel");
                             }
 
@@ -427,31 +452,32 @@ public class Rider_activity extends AppCompatActivity
             });
 
             snackbar.show();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.getMessage();
         }
     }
 
-    void driverSearch_snackbar(String message,String button_title) {
+    void driverSearch_snackbar(String message, String button_title) {
         try {
             final Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
                     .setAction(button_title, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            new GetData().execute();
                             auto_list.setVisibility(View.VISIBLE);
-                           snackbar("Found "+n+" driver","Back");
+                            snackbar("Found " + n + " driver", "Back");
 
                         }
                     });
 
             snackbar.show();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.getMessage();
         }
     }
+
+
 
     @Override
     protected void onResume() {
@@ -464,9 +490,14 @@ public class Rider_activity extends AppCompatActivity
     @Override
     protected void onRestart() {
         super.onRestart();
-        snackbar("Update the location","Yes");
-        getLocation();
+        snackbar_search("Update the location","Yes");
+       // getLocation();
     }
+    public void search(View v){  // must use same name as in XML
+          String search_dest=search_destination.getText().toString();
+        System.out.println("Returned "+search_dest);
 
+
+    }
 
 }

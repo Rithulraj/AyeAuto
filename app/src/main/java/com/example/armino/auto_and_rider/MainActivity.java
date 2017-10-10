@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
        // mMap.addMarker(new MarkerOptions().position(sydney).title("Here"));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setMinZoomPreference(16);
+      //  mMap.setMinZoomPreference(16);
         Marker marker=mMap.addMarker(new MarkerOptions()
         .position(sydney)
                 .title("my position"));
