@@ -1,11 +1,24 @@
 package com.example.armino.auto_and_rider;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
+
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -57,13 +70,25 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.view.ViewGroup.LayoutParams;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import Adapter_class.Distance_calculator;
+import Adapter_class.DriversList;
 import Adapter_class.GPS_track;
 import Adapter_class.GetData;
+import Adapter_class.LocationAcess;
 
 public class Rider_activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
-    private static final String TAG = "";
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+
+
+
+
     ListView auto_list;
     EditText search_destination;
     private GoogleMap mMap;
@@ -84,17 +109,48 @@ public class Rider_activity extends AppCompatActivity
 
     LayoutParams list;
     ListView mListView;
+    static public Activity RIDER_CONTEXT;
 
+
+    private static final String TAG = "RiderActivity";
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
+    Button btnFusedLocation;
+    TextView tvLocation;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    Location mCurrentLocation;
+    String mLastUpdateTime;
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!isGooglePlayServicesAvailable()) {
+            finish();
+        }
+        createLocationRequest();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
         setContentView(R.layout.activity_rider_activity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        RIDER_CONTEXT=this;
+
+
 
         //   ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
@@ -265,8 +321,7 @@ public class Rider_activity extends AppCompatActivity
 
     }
 
-    public class backgroundLoadListView extends
-            AsyncTask<Void, Void, Void> {
+    public class backgroundLoadListView extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPostExecute(Void result) {
@@ -303,27 +358,32 @@ public class Rider_activity extends AppCompatActivity
         GPS_track gpsTracker = new GPS_track(this);
 
         if (gpsTracker.getIsGPSTrackingEnabled()) {
+try {
 
+    latitude = gpsTracker.latitude;
+    longitude = gpsTracker.longitude;
 
-            latitude = gpsTracker.latitude;
-            longitude = gpsTracker.longitude;
+    state_name = gpsTracker.getCountryName(this);
+    city_name = gpsTracker.getLocality(this);
 
-            state_name = gpsTracker.getCountryName(this);
-            city_name = gpsTracker.getLocality(this);
+    place_name = gpsTracker.getAddressLine(this);
 
-            place_name = gpsTracker.getAddressLine(this);
+    String[] addr = place_name.split(",");
+    int size = addr.length;
+    for (int i = 0; i < size; i++) {
+        sb.append(addr[i]).append("\n");
+    }
+    resultAddress = sb.toString();
 
-            String[] addr = place_name.split(",");
-            int size = addr.length;
-            for (int i = 0; i < size; i++) {
-                sb.append(addr[i]).append("\n");
-            }
-            resultAddress = sb.toString();
+    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+    mapFragment.getMapAsync(Rider_activity.this);
 
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            mapFragment.getMapAsync(Rider_activity.this);
-
-            //  driverSearch_snackbar("Founded no driver nearby","REFRESH");
+    //  driverSearch_snackbar("Founded no driver nearby","REFRESH");
+}
+catch (Exception e)
+{
+    Log.d("Rider Activity",e.getMessage());
+}
 
         } else {
 
@@ -367,7 +427,38 @@ public class Rider_activity extends AppCompatActivity
             e.getMessage();
         }
     }
+public  void mapUpdate()
+{
+    getLocation();
+//   LocationAcess la=new LocationAcess(this);
+//  latitude= la.getLatitude();
+//   longitude= la.getLongitude();
 
+    if (latitude == 0 && longitude == 0) {
+        latitude = 11.279343;
+        longitude = 75.784348;
+        Toast.makeText(Rider_activity.this, "Location not accurate", Toast.LENGTH_LONG).show();
+
+    }
+    else {
+        Toast.makeText(Rider_activity.this, " accurate", Toast.LENGTH_LONG).show();
+
+        mapSet = 1;
+    }
+    LatLng mylocation = new LatLng(latitude, longitude);
+
+    LatLng driverLoc1 = new LatLng(latitude + .001, longitude + .001);
+
+    mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
+    mMap.setMinZoomPreference(16);
+    Marker marker = mMap.addMarker(new MarkerOptions().position(mylocation).title("My Location").snippet(place_name));
+    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.demo_marker2));
+
+    Marker marker1 = mMap.addMarker(new MarkerOptions().position(driverLoc1));
+    marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ayeauto_marker));
+    Toast.makeText(Rider_activity.this, "longitude:" + longitude + "latitude:" + latitude, Toast.LENGTH_LONG).show();
+
+}
     void snackbar_search(String message, String button_title) {
 
         try {
@@ -376,42 +467,13 @@ public class Rider_activity extends AppCompatActivity
                     .setAction(button_title, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            getLocation();
-                            mMap.clear();
-
-
-                            if (latitude == 0 && longitude == 0) {
-                                latitude = 11.279343;
-                                longitude = 75.784348;
-                                Toast.makeText(Rider_activity.this, "Location not accurate", Toast.LENGTH_LONG).show();
-
-                            } else {
-                                LatLng mylocation = new LatLng(latitude, longitude);
-
-                                LatLng driverLoc1 = new LatLng(latitude + .001, longitude + .001);
-
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
-                                mMap.setMinZoomPreference(16);
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(mylocation).title("My Location").snippet(place_name));
-                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.demo_marker2));
-
-                                Marker marker1 = mMap.addMarker(new MarkerOptions().position(driverLoc1));
-                                marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ayeauto_marker));
-
-                                mapSet = 1;
-                            }
-
-
-                            Toast.makeText(Rider_activity.this, "longitude:" + longitude + "latitude:" + latitude, Toast.LENGTH_LONG).show();
+                           updateUI();
 
                             auto_list.setVisibility(View.GONE);
+                            driverSearch_snackbar("Founded no driver nearby", "REFRESH");
 
+                              //  snackbar("Searching....", "cancel");
 
-                            if (mapSet == 1) {
-                                driverSearch_snackbar("Founded no driver nearby", "REFRESH");
-                            } else {
-                                snackbar("Searching....", "cancel");
-                            }
 
                         }
                     });
@@ -460,18 +522,27 @@ public class Rider_activity extends AppCompatActivity
                     .setAction(button_title, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new GetData().execute();
-                            n = cv.getCount();
+                                   mapUpdate();
+//                           new GetData().execute();
+//                            n = GetData.al.size();
 
+                            new DriversList().getList();
+                            n = DriversList.al1.size();
                             Toast.makeText(getApplicationContext(), "List size:"+n, Toast.LENGTH_SHORT).show();
-                            if (n <= 5) {
+                            if (n <= 5 && n!=0) {
                                 list.height = (n) * 100 + 100;
-                            } else {
+                            }
+                             else if(n>5){
                                 list.height = 5 * 100 + 100;
+                            }
+                            else
+                            {
+                                list.height = 0;
                             }
                             mListView.setAdapter(cv);
                             auto_list.setVisibility(View.VISIBLE);
                             snackbar("Found " + n + " driver", "Back");
+
 
                         }
                     });
@@ -487,10 +558,22 @@ public class Rider_activity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+            Log.d(TAG, "Location update resumed .....................");
+        }
        snackbar_search("Update the location","Yes");
         //  getLocation();
 
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+
+
 
     @Override
     protected void onRestart() {
@@ -501,8 +584,121 @@ public class Rider_activity extends AppCompatActivity
     public void search(View v){  // must use same name as in XML
           String search_dest=search_destination.getText().toString();
         System.out.println("Returned "+search_dest);
+        updateUI();
 
 
     }
+    private boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+            return false;
+        }
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart fired ..............");
+        mGoogleApiClient.connect();
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop fired ..............");
+        mGoogleApiClient.disconnect();
+        Log.d(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
+    }
+
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
+        startLocationUpdates();
+    }
+
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+        Log.d(TAG, "Location update started ..............: ");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "Connection failed: " + connectionResult.toString());
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "Firing onLocationChanged..............................................");
+        mCurrentLocation = location;
+        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        updateUI();
+    }
+
+    private void updateUI()  {
+        Log.d(TAG, "UI update initiated .............");
+         mMap.clear();
+        if (null != mCurrentLocation) {
+
+
+             double lat = mCurrentLocation.getLatitude();
+             double lng = mCurrentLocation.getLongitude();
+
+            String addressStr = "";
+            try{
+             Geocoder myLocatio = new Geocoder(this, Locale.getDefault());
+             List<Address> myList = myLocatio.getFromLocation(lat, lng, 1);
+             Address address = (Address) myList.get(0);
+           //   addressStr=  address.getLocality();
+              //  addressStr=address.getAdminArea();
+                addressStr += address.getAddressLine(0) + " ";
+            // addressStr += address.getAddressLine(1) + ", ";
+           //  addressStr += address.getAddressLine(1);
+
+                Toast toast= Toast.makeText(getApplicationContext(), ""+addressStr, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(this,""+e.getMessage() , Toast.LENGTH_LONG).show();
+            }
+
+             LatLng mylocation = new LatLng(lat, lng);
+
+             LatLng driverLoc1 = new LatLng(lat + .001, lng + .001);
+
+             mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
+             mMap.setMinZoomPreference(16);
+             Marker marker = mMap.addMarker(new MarkerOptions().position(mylocation).title("My Location").snippet(addressStr));
+             marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.demo_marker2));
+
+             Marker marker1 = mMap.addMarker(new MarkerOptions().position(driverLoc1));
+             marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ayeauto_marker));
+
+
+
+        } else {
+            Log.d(TAG, "location is null ...............");
+        }
+
+    }
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+        Log.d(TAG, "Location update stopped .......................");
+    }
 }

@@ -1,21 +1,9 @@
 package Adapter_class;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import com.example.armino.auto_and_rider.Rider_activity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,60 +16,38 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Created by armino on 10/10/2017.
+ * Created by armino on 10/11/2017.
  */
 
-public class GetData extends AsyncTask<String, Void, String> {
-public static int status=0;
+public class DriversList {
 
-public static  ArrayList<String> al=new ArrayList<>();
-public static Map<String,String> map=new HashMap<String,String>();
-    ProgressBar progressBar;
-    ProgressDialog pdia;
-
-
-
-    protected void onPreExecute(){
-        super.onPreExecute();
-        if(status==1 )
-        {
-            al.clear();
-            map.clear();
-            status=0;
-        }
-       else
-        {
-           status=1;
-        }
-        pdia = new ProgressDialog(Rider_activity.RIDER_CONTEXT);
-        pdia.setMessage("Loading...");
-        pdia.show();
-
-    }
-
-    protected String doInBackground(String... arg0) {
-
-                   try{
+    public static ArrayList<String> al1=new ArrayList<>();
+    public static Map<String,String> map1=new HashMap<String,String>();
+    public String getList()
+    {
+        try{
 
 
-                // URL url = new URL("http://aproxy.noip.me/api?lat=11.2918833&lon=75.781179&rad=10.0");
-                URL url = new URL("http://aproxy.noip.me/api");
+            al1.clear();
+            map1.clear();
 
-                JSONObject postDataParams = new JSONObject();
+            // URL url = new URL("http://aproxy.noip.me/api?lat=11.2918833&lon=75.781179&rad=10.0");
+            URL url = new URL("http://aproxy.noip.me/api");
 
-
-                postDataParams.put("lat",11.2918833);
-                postDataParams.put("lon",75.781179);
-                postDataParams.put("rad",10.0);
+            JSONObject postDataParams = new JSONObject();
 
 
-                Log.e("params",postDataParams.toString());
+            postDataParams.put("lat",11.2918833);
+            postDataParams.put("lon",75.781179);
+            postDataParams.put("rad",10.0);
+
+
+            Log.e("params",postDataParams.toString());
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000 /* milliseconds */);
@@ -123,8 +89,10 @@ public static Map<String,String> map=new HashMap<String,String>();
                     JSONObject jObj = jArray.getJSONObject(i);
                     Log.e("Number Plate:",jObj.getString("number_plate"));
                     Log.e("Phone no:",jObj.getString("phone"));
-                      al.add(jObj.getString("number_plate"));
-                    map.put(jObj.getString("number_plate"),jObj.getString("phone"));
+                    al1.add(jObj.getString("number_plate"));
+                    map1.put(jObj.getString("number_plate"),jObj.getString("phone"));
+
+                   Log.e("ArayList...................____", al1.get(i));
 
                 }
 
@@ -141,15 +109,6 @@ public static Map<String,String> map=new HashMap<String,String>();
             return new String("Exception: " + e.getMessage());
         }
     }
-
-    @Override
-    protected void onPostExecute(String result) {
-        pdia.dismiss();
-        System.out.println("Result:"+result);
-
-    }
-
-
     public String getPostDataString(JSONObject params) throws Exception {
 
         Log.e("jsonobject",params.toString());

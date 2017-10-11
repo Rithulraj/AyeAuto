@@ -51,7 +51,8 @@
         </activity>
         <activity
             android:name=".Rider_Map"
-            android:label="@string/title_activity_rider__map"></activity>
+            android:label="@string/title_activity_rider__map" />
+        <activity android:name=".FusedLocation" />
     </application>
 
 </manifest>

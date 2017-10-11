@@ -53,15 +53,6 @@
             android:layout_marginRight="27dp"
             android:tint="@color/phone_color_green"
             app:srcCompat="@mipmap/ic_local_phone_white_24dp" />
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.2"
-            android:layout_marginLeft="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/customList_Imageview_ID" />
 
 
     </RelativeLayout>
