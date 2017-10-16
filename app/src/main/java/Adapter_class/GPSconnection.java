@@ -5,4 +5,9 @@ package Adapter_class;
  */
 
 public class GPSconnection {
+    boolean gpsEnabled=false;
+    public boolean checkGPSconnection()
+    {
+        return true;
+    }
 }

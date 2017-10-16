@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
@@ -22,6 +24,12 @@ import com.squareup.picasso.Picasso;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
 import Adapter_class.DriversList;
 import Adapter_class.GetData;
 
@@ -31,10 +39,8 @@ import Adapter_class.GetData;
 
 class Custom_listview extends BaseAdapter {
     Activity context;
+    ArrayList<String> dieledNo=new ArrayList<>();
 
-   public String[] names={"Kl-45-443","KL-45-4523","KL-45-4553","KL-45-4823","KL-45-4527","KL-45-4153","KL-45-2823","KL-45-7823"};
-  //public String[] names={"Kl-45-443","KL-45-4523"};
-   //public String[] names={"Kl-45-443"};
 
     public Custom_listview(Activity mainActivity) {
         this.context=mainActivity;
@@ -55,37 +61,57 @@ class Custom_listview extends BaseAdapter {
         return 0;
     }
 
+
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
+
+
         LayoutInflater in=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
        final View v=in.inflate(R.layout.custom_listview,null,true);
 
-        RelativeLayout list_layout = (RelativeLayout) v.findViewById(R.id.list_layout);
+        final RelativeLayout list_layout = (RelativeLayout) v.findViewById(R.id.list_layout);
 
         ImageView call=(ImageView)v.findViewById(R.id. imageView2);
       final   TextView auto_name=(TextView)v.findViewById(R.id.auto_list_names);
         ImageView auto_pict=(ImageView)v.findViewById(R.id.customList_Imageview_ID);
 
         auto_name.setText(DriversList.al1.get(i));
-        //auto_name.setText(GetData.map.get(i));
-        Picasso.with(context).load(R.drawable.demo_dp4).into(auto_pict);
 
+        Picasso.with(context).load(R.drawable.demo_dp4).into(auto_pict);
+     /*   try {
+            // Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(" http://corporate2.bdjobs.com/21329.jpg").getContent());
+            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL( DriversList.map2.get(DriversList.al1.get(i))).getContent());
+            //  http://corporate2.bdjobs.com/21329.jpg
+            auto_pict.setImageBitmap(bitmap);
+            //convertView.setBackgroundResource(R.drawable.cardlayout);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        for(int l=0;l<dieledNo.size();l++)
+        {
+           if (dieledNo .contains(DriversList.al1.get(i)) ) {
+
+               list_layout.setBackgroundColor(Color.parseColor("#C0C0C0"));
+            }
+        }
 
         call.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                System.out.println("image clicked:"+DriversList.al1.get(i)+"...............");
-                Toast.makeText(context,"image clicked:"+ DriversList.al1.get(i),Toast.LENGTH_LONG).show();
-               // v.setBackgroundColor(Color.parseColor("#ff00bf"));
-              //  auto_name.setTextColor(Color.parseColor("#19c5ff"));
+
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse("tel:"+ DriversList.map1.get(DriversList.al1.get(i))));//change the number
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 }
                 context.startActivity(callIntent);
-              //  notifyDataSetChanged();
-                auto_name.setTextColor(Color.parseColor("#19c5ff"));
+
+                list_layout.setBackgroundColor(Color.parseColor("#C0C0C0"));
+                dieledNo.add(DriversList.al1.get(i));
 
             }
 
